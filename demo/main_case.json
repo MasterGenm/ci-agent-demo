@@ -1,0 +1,25 @@
+{
+  "title": "AI 笔记竞品分析（v1.2 完整路径）",
+  "description": "Notion / Evernote / Mem 三方对比，启用 QA Critic 与 LLM Rescue，适合评委主 demo。",
+  "query": "AI 笔记与个人知识管理工具竞品分析：AI 功能、知识整理、用户迁移与产品定位",
+  "competitors_cli": "Notion,Evernote,Mem",
+  "enable_qa_critic": true,
+  "enable_llm_rescue": true,
+  "seed_urls": [
+    "https://www.notion.com/product/ai",
+    "https://evernote.com/features/ai",
+    "https://mem.ai"
+  ],
+  "expected_artifacts": [
+    "claims.json",
+    "evidence.json",
+    "report.md",
+    "qa_audit.json",
+    "qa_summary.md",
+    "rescue_outcomes.json",
+    "trace.json",
+    "review_queue.json"
+  ],
+  "estimated_duration_minutes": 12,
+  "estimated_cost_usd": 0.03
+}

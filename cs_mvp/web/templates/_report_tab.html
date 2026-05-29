@@ -1,0 +1,39 @@
+<div class="section-title">
+  <h2><i data-lucide="file-text"></i><span>Report</span></h2>
+  <div class="inline-actions">
+    <a class="subtle-link" href="/runs/{{ task_id }}/report.html" target="_blank" rel="noreferrer">open audit report</a>
+    <a class="subtle-link" href="/runs/{{ task_id }}/report.pptx" download>📥 下载 PPT</a>
+    <a class="subtle-link" href="/runs/{{ task_id }}/report_pm.html" target="_blank" rel="noreferrer">open PM report</a>
+    {% if report_quality.enabled %}
+    <a class="subtle-link" href="/runs/{{ task_id }}/artifact/report_style_audit" target="_blank" rel="noreferrer">style audit json</a>
+    <a class="subtle-link" href="/runs/{{ task_id }}/report_style_audit.md" target="_blank" rel="noreferrer">style audit md</a>
+    {% endif %}
+  </div>
+</div>
+{% if report_quality.enabled %}
+<section class="mb-4 grid grid-cols-1 md:grid-cols-5 gap-3" aria-label="Report quality summary">
+  <div class="p-3 rounded-lg border border-slate-200 bg-white">
+    <p class="text-xs font-semibold uppercase tracking-wide text-slate-500">Overall</p>
+    <p class="mt-1 text-xl font-bold text-slate-900">{{ report_quality.overall_score }}</p>
+  </div>
+  <div class="p-3 rounded-lg border border-slate-200 bg-white">
+    <p class="text-xs font-semibold uppercase tracking-wide text-slate-500">Sections</p>
+    <p class="mt-1 text-xl font-bold text-slate-900">{{ report_quality.covered_sections }}/{{ report_quality.total_sections }}</p>
+  </div>
+  <div class="p-3 rounded-lg border border-slate-200 bg-white">
+    <p class="text-xs font-semibold uppercase tracking-wide text-slate-500">Evidence</p>
+    <p class="mt-1 text-xl font-bold text-slate-900">{{ report_quality.recommendations_with_evidence }}/{{ report_quality.recommendation_count }}</p>
+  </div>
+  <div class="p-3 rounded-lg border border-slate-200 bg-white">
+    <p class="text-xs font-semibold uppercase tracking-wide text-slate-500">Citations</p>
+    <p class="mt-1 text-xl font-bold text-slate-900">{{ report_quality.citation_count }}</p>
+  </div>
+  <div class="p-3 rounded-lg border border-slate-200 bg-white">
+    <p class="text-xs font-semibold uppercase tracking-wide text-slate-500">Tone flags</p>
+    <p class="mt-1 text-xl font-bold text-slate-900">{{ report_quality.ai_tone_flags_count }}</p>
+  </div>
+</section>
+{% else %}
+<p class="empty mb-4">Report style audit has not been generated for this run.</p>
+{% endif %}
+<iframe class="report-frame" src="/runs/{{ task_id }}/report.html" title="report"></iframe>

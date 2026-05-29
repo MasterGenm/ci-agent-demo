@@ -1,0 +1,10 @@
+[
+  {
+    "evidence_id": "E-001",
+    "source_id": "S-CUR-001",
+    "competitor_name": "Cursor",
+    "claim_type": "feature",
+    "quote": "Cursor supports code completion and chat-based programming.",
+    "confidence": 0.8
+  }
+]

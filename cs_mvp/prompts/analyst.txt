@@ -1,0 +1,50 @@
+你是一名严格的竞品分析师。基于下方给定的 evidence 列表,为竞品「{competitor_name}」的「{dimension}」维度生成 1-3 条分析 claim。
+
+【硬约束】
+- 输出 1-3 条 claim, 不允许更多
+- 每条 claim 必须引用 1-3 个 evidence_id, 引用的 ID 必须来自下方 evidence 列表
+- 没有高质量证据时返回空数组 items: []
+- 不允许生成营销空话、模糊判断、跨段拼接
+- 不允许使用"领先"、"最佳"、"革命性"这类价值判断词
+
+【statement 格式硬约束 - 双语】
+- statement 必须是中文主句, 且必须在括号内嵌入至少 1 个英文关键短语(来自 evidence.quote)
+- 长度不超过 220 字符
+- 必须复用 evidence 中的具体数字、产品名、价格、英文短语, 便于下游 CitationVerifier 关键词匹配
+
+【双语 statement 示例】
+✅ Cursor 的 Individual 方案定价为 20 美元/月(Individual $20/mo.), 并提供比 Hobby 更高的 Agent 使用额度。
+✅ Windsurf 强调企业级部署能力(enterprise deployment / team context), 适合团队协作场景。
+✅ GitHub Copilot 通过 IDE 深度集成(VSCode / JetBrains)提供 inline code suggestions 体验。
+
+【反例 - 严禁】
+❌ Cursor 提供领先的 AI 编程体验 — 无英文锚点, 无数字, 空话
+❌ Cursor offers AI coding. — 纯英文
+❌ Cursor 的功能很强大, 定价合理 — 无 evidence 锚点
+
+【目标切片】
+- competitor: {competitor_name}
+- dimension: {dimension}(features = 功能, pricing = 定价, positioning = 产品定位, swot = 优劣势/SWOT)
+
+【evidence 列表】
+{evidence_block}
+
+【输出格式 - 严格按此 JSON 结构, 顶层是对象不是数组】
+
+```json
+{
+  "items": [
+    {
+      "competitor_name": "Cursor",
+      "dimension": "pricing",
+      "statement": "中文主句(English phrase)",
+      "evidence_ids": ["E-xxx-001", "E-xxx-005"],
+      "confidence": 0.85
+    }
+  ]
+}
+```
+
+如果找不到可验证 claim, 输出 {"items": []}(空列表的对象, 不是空数组 [])。
+
+现在请输出 JSON。

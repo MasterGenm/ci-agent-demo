@@ -1,0 +1,49 @@
+{
+  "schema_version": "1.2.0",
+  "generated_at": "2026-05-21T12:00:00Z",
+  "main_demo": {
+    "task_id": "T-fa39da6559f14a04ac32fab60842a7ec",
+    "title": "向量数据库竞品分析（v1.5 真闭环 + Langfuse trace）",
+    "is_demo": true,
+    "primary": true,
+    "audience_note": "Milvus / Qdrant / Weaviate 三方对比。8 节点 DAG 含 QA Critic 真闭环(10 revisions)+ LLM Rescue + Phase 3 商业维度(3 条 insights claims 全 accepted)+ Langfuse Cloud trace 同步推送。v1.5.0 portfolio trust pack 验证主 demo。",
+    "recommended_tab_order": [
+      "dag",
+      "qa_critic",
+      "revision",
+      "report",
+      "evidence",
+      "schema",
+      "trace"
+    ]
+  },
+  "backup_demo": {
+    "task_id": "T-1cbcb6f3f1b447ab9094fef79f9ea65d",
+    "title": "向量数据库竞品分析（v1.4 真实 LLM 端到端对照）",
+    "is_demo": true,
+    "primary": false,
+    "audience_note": "v1.4.0 + v1.4.1 patch 验证 run。展示无 Langfuse trace 时的本地 artifact 路径,13 revisions / 5 条 insights claims 全 accepted。",
+    "recommended_tab_order": [
+      "dag",
+      "qa_critic",
+      "revision",
+      "report",
+      "evidence",
+      "schema",
+      "trace"
+    ]
+  },
+  "legacy_demo": {
+    "task_id": "T-50d7bb2f823e444994deac9cc85f0e8e",
+    "title": "AI 笔记 case 4（v1.1 legacy 对照）",
+    "is_demo": true,
+    "primary": false,
+    "audience_note": "v1.1 baseline,无 QA Critic / Revision,演示系统对老 run 的兼容性与红色召回警告兜底。",
+    "recommended_tab_order": [
+      "dag",
+      "report",
+      "evidence",
+      "trace"
+    ]
+  }
+}

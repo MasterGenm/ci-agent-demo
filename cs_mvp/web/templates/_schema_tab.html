@@ -1,0 +1,47 @@
+<div class="section-title">
+  <div>
+    <h2><i data-lucide="braces"></i><span>数据结构契约</span></h2>
+    <p class="muted-text">系统使用 Pydantic v2 定义所有数据契约，保证来源、证据、Claim、QA 反馈和修订历史的结构一致性。</p>
+  </div>
+  <span>schema_version: <code>{{ schema.schema_version }}</code></span>
+</div>
+
+<div class="schema-models">
+  {% for model in schema.models %}
+  <section class="schema-model">
+    <h3>{{ model.name }} <span class="produced-by">由 {{ model.produced_by }} 产出</span></h3>
+    <table class="schema-fields">
+      <thead>
+        <tr>
+          <th>字段名</th>
+          <th>类型</th>
+          <th>必填</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for field in model.fields %}
+        <tr>
+          <td><code>{{ field.name }}</code></td>
+          <td><code>{{ field.type }}</code></td>
+          <td>{% if field.required %}是{% else %}可选{% endif %}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </section>
+  {% endfor %}
+</div>
+
+<section class="schema-future">
+  <h3>行业预设扩展示例（未来方向）</h3>
+  <p class="muted-text">以下为行业预设扩展示例，当前版本（v1.6）未实现可编辑 Schema 或行业 YAML 配置。</p>
+  <ul>
+    {% for preset in schema.industry_presets_future %}
+    <li><strong>{{ preset.name }}</strong>：{{ preset.dimensions | join("、") }}</li>
+    {% endfor %}
+  </ul>
+</section>
+
+<p class="schema-doc-link">
+  <a class="subtle-link" href="{{ schema.doc_link }}" target="_blank" rel="noreferrer">查看完整 SCHEMA.md 文档</a>
+</p>

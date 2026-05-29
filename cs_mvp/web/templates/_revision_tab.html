@@ -1,0 +1,49 @@
+<div class="section-title">
+  <h2><i data-lucide="repeat-2"></i><span>修订记录</span></h2>
+  {% if revision.enabled %}<a class="subtle-link" href="/runs/{{ task_id }}/artifact/revision_history">revision_history.json</a>{% endif %}
+</div>
+{% if not revision.enabled %}
+<p class="empty">本次 Run QA 审查未触发修订，所有 Claim 一次通过。</p>
+{% else %}
+<div class="stats-strip">
+  <div><span>修订次数</span><strong>{{ revision.total_revisions }}</strong></div>
+  <div><span>当前轮次</span><strong>{{ revision.revision_round or 0 }}</strong></div>
+  <div><span>最大轮次</span><strong>{{ revision.max_revision_rounds or 1 }}</strong></div>
+  <div><span>修订成本</span><strong>${{ "%.4f"|format(revision.total_revise_cost_usd or 0) }}</strong></div>
+</div>
+<div class="revision-table-wrap">
+  <table class="trace-table revision-table">
+    <thead>
+      <tr>
+        <th>Claim ID</th>
+        <th>轮次</th>
+        <th>修订前</th>
+        <th>修订后</th>
+        <th>原始表述</th>
+        <th>修订表述</th>
+        <th>QA 原因</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for item in revision.revisions %}
+      <tr class="{% if item.revision_failed %}revision-failed{% endif %}">
+        <td class="mono">{{ item.claim_id }}</td>
+        <td>{{ item.revision_round }}</td>
+        <td><span class="label-{{ item.qa_label_before }}">{{ {"accepted":"通过","needs_revision":"待修订","risky":"高风险"}.get(item.qa_label_before, item.qa_label_before) }}</span></td>
+        <td>
+          <span class="label-{{ item.qa_label_after }}">{{ {"accepted":"通过","needs_revision":"待修订","risky":"高风险"}.get(item.qa_label_after, item.qa_label_after) }}</span>
+          {% if item.revision_failed %}<span class="chip revision-chip">修订失败</span>{% endif %}
+          {% if item.max_revision_reached %}<span class="chip revision-chip">达到上限</span>{% endif %}
+        </td>
+        <td>{{ item.original_statement }}</td>
+        <td>{{ item.revised_statement }}</td>
+        <td>
+          {{ item.qa_reason }}
+          {% if item.failure_reason %}<br><span class="muted-text">{{ item.failure_reason }}</span>{% endif %}
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endif %}

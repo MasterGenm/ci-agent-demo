@@ -1,0 +1,23 @@
+{
+  "title": "AI 笔记竞品分析（legacy case 4 对照）",
+  "description": "case 4 legacy run 对照，用于展示 v1.1 baseline artifact 与 v1.2 Dashboard 的兼容读取。",
+  "query": "AI 笔记与个人知识管理工具竞品分析：AI 功能、知识整理、用户迁移与产品定位",
+  "competitors_cli": "Notion,Evernote,Mem",
+  "enable_qa_critic": false,
+  "enable_llm_rescue": false,
+  "seed_urls": [
+    "https://www.notion.com/product/ai",
+    "https://evernote.com/features/ai",
+    "https://mem.ai"
+  ],
+  "expected_artifacts": [
+    "claims.json",
+    "evidence.json",
+    "report.md",
+    "report.html",
+    "trace.json",
+    "review_queue.json"
+  ],
+  "estimated_duration_minutes": 10,
+  "estimated_cost_usd": 0.02
+}

@@ -1,0 +1,41 @@
+<div class="section-title">
+  <h2><i data-lucide="git-branch"></i><span>DAG 执行流程图</span></h2>
+  <a class="subtle-link" href="/runs/{{ task_id }}/dag.json">dag.json</a>
+</div>
+<div class="dag-grid">
+  <div class="mermaid">
+graph LR
+{% for node in dag.nodes -%}
+  N{{ loop.index }}["{{ node.label }}"]:::{{ node.status }}
+{% endfor -%}
+{% for node in dag.nodes[:-1] -%}
+{% set next_node = dag.nodes[loop.index0 + 1] -%}
+{% if node.name == "qa_critic" and next_node.name == "analyst_revise" -%}
+  N{{ loop.index }} -- "需修订" --> N{{ loop.index + 1 }}
+{% elif node.name == "analyst_revise" and next_node.name == "qa_critic" -%}
+  N{{ loop.index }} -- "再审查" --> N{{ loop.index + 1 }}
+{% else -%}
+  N{{ loop.index }} --> N{{ loop.index + 1 }}
+{% endif -%}
+{% endfor -%}
+  classDef completed fill:#dcfce7,stroke:#16a34a,color:#14532d
+  classDef running fill:#fef3c7,stroke:#ca8a04,color:#713f12
+  classDef failed fill:#fee2e2,stroke:#dc2626,color:#7f1d1d
+  classDef pending fill:#f1f5f9,stroke:#94a3b8,color:#334155
+  </div>
+  <div class="node-list">
+    {% if dag.has_revision_loop %}
+    <p class="loop-note">检测到修订闭环：QA Critic 将低质量 Claim 路由至 Analyst Revise 修订，完成后重新审查。</p>
+    {% endif %}
+    {% for node in dag.nodes %}
+    {% set status_cn = {"completed": "完成", "running": "运行中", "failed": "失败", "pending": "等待"}.get(node.status, node.status) %}
+    <div class="node-line" title="{{ node.role_card.role|default('') }}{% if node.role_card.goal %} — {{ node.role_card.goal }}{% endif %}{% if node.capability.skills_count %} | {{ node.capability.skills_count }} 个技能{% endif %}">
+      <span class="node-name">{{ node.label }}</span>
+      <span class="label-{{ node.status }}">{{ status_cn }}</span>
+      <span class="muted-text">{% if node.capability.skills_count %}{{ node.capability.skills_count }} 个技能{% else %}-{% endif %}</span>
+      <span>{% if node.latency_ms is not none %}{{ node.latency_ms }} ms{% else %}-{% endif %}</span>
+      <span>{% if node.cost_usd is not none %}${{ "%.4f"|format(node.cost_usd) }}{% else %}-{% endif %}</span>
+    </div>
+    {% endfor %}
+  </div>
+</div>

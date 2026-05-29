@@ -1,0 +1,99 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      width: 1280px;
+      height: 720px;
+      margin: 0;
+      overflow: hidden;
+      background: #f8fafc;
+      color: #1e293b;
+      font-family: "Microsoft YaHei", "PingFang SC", Arial, sans-serif;
+    }
+    header {
+      height: 64px;
+      padding: 0 70px;
+      background: #1e3a8a;
+      color: #ffffff;
+      display: flex;
+      align-items: center;
+      font-size: 25px;
+      font-weight: 800;
+    }
+    main {
+      padding: 48px 76px;
+      display: grid;
+      grid-template-columns: 1.35fr 0.9fr;
+      gap: 56px;
+    }
+    ul {
+      margin: 0;
+      padding-left: 26px;
+      font-size: 20px;
+      line-height: 1.65;
+      color: #334155;
+    }
+    li { margin-bottom: 12px; }
+    .meta {
+      background: #ffffff;
+      border: 1px solid #e2e8f0;
+      border-radius: 14px;
+      box-shadow: 0 4px 14px rgba(15, 23, 42, 0.08);
+      padding: 30px;
+      align-self: start;
+    }
+    .row {
+      padding: 15px 0;
+      border-bottom: 1px solid #e2e8f0;
+    }
+    .row:last-child { border-bottom: 0; }
+    .key {
+      display: block;
+      margin-bottom: 6px;
+      color: #64748b;
+      font-size: 14px;
+      font-weight: 800;
+      text-transform: uppercase;
+    }
+    .val {
+      color: #1e293b;
+      font-size: 18px;
+      font-weight: 700;
+      word-break: break-all;
+    }
+  </style>
+</head>
+<body>
+  <header>分析说明</header>
+  <main>
+    <section>
+      <ul>
+        {% for item in notes %}
+        <li>{{ item|e }}</li>
+        {% endfor %}
+      </ul>
+    </section>
+    <aside class="meta">
+      <div class="row">
+        <span class="key">Run ID</span>
+        <span class="val">{{ task_id|e }}</span>
+      </div>
+      <div class="row">
+        <span class="key">Duration</span>
+        <span class="val">{{ duration|e }}</span>
+      </div>
+      <div class="row">
+        <span class="key">Completed</span>
+        <span class="val">{{ completed_at|e }}</span>
+      </div>
+      <div class="row">
+        <span class="key">Generator</span>
+        <span class="val">cs-mvp visual PPT</span>
+      </div>
+    </aside>
+  </main>
+</body>
+</html>

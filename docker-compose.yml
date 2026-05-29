@@ -1,0 +1,15 @@
+services:
+  cs-mvp:
+    build: .
+    image: cs-mvp:v1.5
+    container_name: cs-mvp
+    ports:
+      - "8765:8765"
+    volumes:
+      - ./runs:/app/runs
+      - ./data:/app/data
+    environment:
+      PYTHONUNBUFFERED: "1"
+      RUNS_DIR: /app/runs
+      DB_PATH: /app/data/cs_mvp.db
+    restart: unless-stopped

@@ -1,0 +1,19 @@
+.env
+.venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+data/*
+!data/.gitkeep
+runs/*
+!runs/.gitkeep
+
+# 参考资料（含个人数据和 PDF，不上传）
+参考/
+
+# 存档快照（本地用，不上传）
+docs/archive/
+
+# PPT 截图临时文件
+cs_mvp/agents/ppt_slides/__pycache__/
+runs/*/_slides/

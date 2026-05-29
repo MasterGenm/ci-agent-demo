@@ -1,0 +1,37 @@
+<div class="section-title">
+  <h2><i data-lucide="activity"></i><span>执行追踪</span></h2>
+  <a class="subtle-link" href="/runs/{{ task_id }}/artifact/trace">trace.json</a>
+</div>
+<table class="trace-table">
+  <thead>
+    <tr>
+      <th>节点</th>
+      <th>状态</th>
+      <th>耗时</th>
+      <th>Token 数</th>
+      <th>成本</th>
+      <th>模型</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% set total_cost = namespace(value=0) %}
+    {% for row in trace.node_runs or [] %}
+    {% set total_cost.value = total_cost.value + (row.cost_usd or 0) %}
+    <tr>
+      <td class="mono">{{ row.node_name }}</td>
+      <td><span class="label-{{ row.status }}">{{ {"completed":"完成","running":"运行中","failed":"失败","pending":"等待"}.get(row.status, row.status) }}</span></td>
+      <td>{% if row.latency_ms is not none %}{{ row.latency_ms }} ms{% else %}-{% endif %}</td>
+      <td>{{ (row.input_tokens or 0) + (row.output_tokens or 0) }}</td>
+      <td>${{ "%.4f"|format(row.cost_usd or 0) }}</td>
+      <td>{{ row.llm_model or "-" }}</td>
+    </tr>
+    {% endfor %}
+  </tbody>
+  <tfoot>
+    <tr>
+      <td colspan="4">合计</td>
+      <td>${{ "%.4f"|format(total_cost.value) }}</td>
+      <td></td>
+    </tr>
+  </tfoot>
+</table>

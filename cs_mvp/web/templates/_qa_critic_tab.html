@@ -1,0 +1,40 @@
+<div class="section-title">
+  <h2><i data-lucide="shield-check"></i><span>QA 审查结果</span></h2>
+  {% if qa.enabled %}<a class="subtle-link" href="/runs/{{ task_id }}/artifact/qa_audit">qa_audit.json</a>{% endif %}
+</div>
+{% if not qa.enabled %}
+<p class="empty">QA Critic not enabled for this run</p>
+<p class="empty">本次 Run 未启用 QA Critic 审查节点。</p>
+{% else %}
+<div class="stats-strip">
+  <div><span>通过</span><strong>{{ qa.audit.accepted_count }}</strong></div>
+  <div><span>待修订</span><strong>{{ qa.audit.needs_revision_count }}</strong></div>
+  <div><span>高风险</span><strong>{{ qa.audit.risky_count }}</strong></div>
+  <div><span>LLM 成本</span><strong>${{ "%.4f"|format(qa.audit.llm_cost_usd or 0) }}</strong></div>
+</div>
+<div class="qa-list">
+  {% for feedback in qa.feedbacks %}
+  <details class="qa-item {{ feedback.label }}">
+    <summary>
+      <span class="mono">{{ feedback.claim_id }}</span>
+      <span class="label-{{ feedback.label }}">{{ {"accepted":"通过","needs_revision":"待修订","risky":"高风险"}.get(feedback.label, feedback.label) }}</span>
+      <span>{{ feedback.reason }}</span>
+    </summary>
+    <p class="statement">{{ feedback.claim.statement or "(未找到对应 Claim)" }}</p>
+    <div class="tags">
+      {% for tag in feedback.issue_tags %}
+      <span>{{ tag }}</span>
+      {% endfor %}
+    </div>
+    {% for ev in feedback.evidence %}
+    <blockquote>
+      <strong>{{ ev.evidence_id }}</strong> · {{ ev.competitor_name }} · {{ {"feature":"功能","pricing":"定价","positioning":"定位","metric":"指标","other":"其他"}.get(ev.claim_type, ev.claim_type) }}<br>
+      {{ ev.quote[:420] }}{% if ev.quote|length > 420 %}...{% endif %}
+    </blockquote>
+    {% endfor %}
+  </details>
+  {% else %}
+  <p class="empty">暂无 QA 审查记录。</p>
+  {% endfor %}
+</div>
+{% endif %}

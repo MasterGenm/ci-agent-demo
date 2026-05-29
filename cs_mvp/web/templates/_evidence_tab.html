@@ -1,0 +1,21 @@
+<div class="section-title">
+  <h2><i data-lucide="paperclip"></i><span>原始证据库</span></h2>
+  <a class="subtle-link" href="/runs/{{ task_id }}/artifact/evidence">evidence.json</a>
+</div>
+{% for competitor, items in evidence.by_competitor.items() %}
+<section class="evidence-group">
+  <h3>{{ competitor }} <span>{{ items|length }} 条</span></h3>
+  {% for ev in items %}
+  <article class="evidence-row">
+    <div>
+      <span class="mono">{{ ev.evidence_id }}</span>
+      <span class="chip">{{ {"feature":"功能","pricing":"定价","positioning":"定位","metric":"指标","other":"其他"}.get(ev.claim_type, ev.claim_type) }}</span>
+    </div>
+    <p>{{ ev.quote[:260] }}{% if ev.quote|length > 260 %}...{% endif %}</p>
+    {% if ev.source_url %}<a href="{{ ev.source_url }}" target="_blank" rel="noreferrer">{{ ev.source_title or ev.source_url }}</a>{% endif %}
+  </article>
+  {% endfor %}
+</section>
+{% else %}
+<p class="empty">本次 Run 未生成证据数据。</p>
+{% endfor %}

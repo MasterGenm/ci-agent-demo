@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      width: 1280px;
+      height: 720px;
+      margin: 0;
+      overflow: hidden;
+      background: #f8fafc;
+      color: #1e293b;
+      font-family: "Microsoft YaHei", "PingFang SC", Arial, sans-serif;
+    }
+    header {
+      height: 64px;
+      padding: 0 70px;
+      background: #1e3a8a;
+      color: #ffffff;
+      display: flex;
+      align-items: center;
+      font-size: 25px;
+      font-weight: 800;
+    }
+    main { padding: 46px 76px; }
+    .metrics {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 26px;
+      margin-bottom: 56px;
+    }
+    .metric {
+      height: 166px;
+      background: #ffffff;
+      border: 1px solid #e2e8f0;
+      border-radius: 14px;
+      box-shadow: 0 4px 14px rgba(15, 23, 42, 0.08);
+      padding: 28px 30px;
+    }
+    .value {
+      font-size: 54px;
+      line-height: 1;
+      font-weight: 900;
+      color: #1e3a8a;
+      margin-bottom: 14px;
+    }
+    .label {
+      font-size: 17px;
+      color: #64748b;
+      font-weight: 700;
+    }
+    h2 {
+      margin: 0 0 18px;
+      color: #1e3a8a;
+      font-size: 22px;
+    }
+    ol {
+      margin: 0;
+      padding-left: 28px;
+      color: #334155;
+      font-size: 18px;
+      line-height: 1.7;
+    }
+  </style>
+</head>
+<body>
+  <header>证据摘要</header>
+  <main>
+    <section class="metrics">
+      <article class="metric">
+        <div class="value">{{ valid_sources|e }}</div>
+        <div class="label">有效来源</div>
+      </article>
+      <article class="metric">
+        <div class="value">{{ evidence_count|e }}</div>
+        <div class="label">证据条数</div>
+      </article>
+      <article class="metric">
+        <div class="value">{{ qa_pass_rate|e }}</div>
+        <div class="label">QA 通过率</div>
+      </article>
+    </section>
+    <h2>主要来源</h2>
+    <ol>
+      {% for source in top_sources %}
+      <li>{{ source|e }}</li>
+      {% endfor %}
+    </ol>
+  </main>
+</body>
+</html>

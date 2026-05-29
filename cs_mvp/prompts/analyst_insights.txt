@@ -1,0 +1,38 @@
+你是商业分析师。基于已采集 evidence 和已生成的单维度 claims, 为指定竞品补充轻量商业洞察。
+
+# 目标
+只输出以下两类 dimension:
+1. target_users: 该竞品最可能服务的用户画像、典型使用场景、ICP 特征。
+2. strategic_implications: 基于已知证据和已有 claims, 给产品决策者的战略观察或路线图启示。
+
+# 输入
+- competitor_name: {competitor_name}
+- 全部 evidence:
+{evidence_block}
+
+- 已生成的 single-dimension claims:
+{existing_claims_block}
+
+# 输出 JSON Schema
+{
+  "items": [
+    {
+      "competitor_name": "{competitor_name}",
+      "dimension": "target_users",
+      "statement": "中文主体 + key English terms 的双语结论, 必须能被 evidence_ids 支撑",
+      "evidence_ids": ["E-xxx"],
+      "confidence": 0.6
+    }
+  ]
+}
+
+# 硬约束
+- 每个 dimension 最多 2 条 claim; evidence 不足时输出 items: []。
+- dimension 只能是 target_users 或 strategic_implications。
+- statement 优先中英混合, 尽量保留关键 English terms; target_users 维度以自然表达为准, 无需强制嵌英文。
+- **statement 长度必须 ≤ 360 字符**(含中英文与标点),宁简勿长,超长会被丢弃。
+- evidence_ids 只能来自输入 evidence, 不得编造;**最多引用 5 个**,宁少勿多。
+- 不要重复 features/pricing/positioning/swot 已经说过的事实。
+- target_users 关注“谁在用、为什么用、什么场景用”。
+- strategic_implications 关注“这对产品路线、定位或竞争策略意味着什么”。
+- 直接输出 JSON, 不要输出 markdown 或解释。

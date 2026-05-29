@@ -1,0 +1,107 @@
+# 竞品分析报告
+
+**调研问题**：{{ task.query }}
+**竞品范围**：{{ task.competitors | map(attribute='name') | join(' / ') }}
+**生成时间**：{{ generated_at }}
+**Run ID**：{{ run_id }}
+
+---
+
+{% if low_recall_competitors %}
+> 🔴 **数据召回警告**:以下竞品的 evidence 数量过低(≤{{ low_recall_competitors|length }} 条),报告对其分析覆盖严重不足,建议重新指定竞品名(加域名后缀如 `Mem.ai`)或补充 exclude_keywords:
+{% for name in low_recall_competitors %}
+> - **{{ name }}**:{{ evidence_count_by_competitor[name] }} 条 evidence
+{% endfor %}
+>
+> 本报告内容主要基于其他竞品数据,**不能用于跨这些竞品的产品决策**。
+
+{% endif %}
+{% if node_modes %}
+{% if node_modes.writer != "real" and node_modes.analyst == "real" %}
+> ⚠️ **M3 阶段报告**：Collector + Extractor + Analyst 已使用真实 LLM,但 Writer 仍为 mock(段落组织、Executive Summary 待 M4 完善)。
+{% elif node_modes.extractor == "real" and node_modes.analyst != "real" %}
+> ⚠️ **M2 阶段报告**：Collector + Extractor 已使用真实数据，但 Analyst / Writer 仍为 mock。本报告的分析结论尚未经过真实 LLM 验证，仅作为开发期占位。
+{% elif node_modes.collector == "real" and node_modes.extractor != "real" %}
+> ⚠️ **M1 阶段报告**：Collector 已使用真实数据，但 Extractor / Analyst / Writer 仍为 mock。本报告的分析结论与证据链尚未经过真实 LLM 验证，仅作为开发期占位。
+{% endif %}
+{% endif %}
+
+## 核心摘要
+
+{{ executive_summary }}
+
+{% for competitor in competitors %}
+## {{ competitor }}
+
+{% for claim in claims_by_competitor[competitor] %}
+{% if claim.dimension not in ["target_users", "strategic_implications"] %}
+- {{ claim.statement }} {{ claim.evidence_ids | citation_ids }}
+{% endif %}
+{% else %}
+- (本竞品本轮未生成可信单项观察,详见跨竞品对比与待核实章节)
+{% endfor %}
+
+{% endfor %}
+{% if cross_claims %}
+## 跨竞品对比
+
+> 以下为基于已提取证据的跨竞品观察。因跨证据综合,statement 较长,暂不使用单条关键词匹配阈值裁决。
+
+{% for claim in cross_claims %}
+- **[{{ claim.dimension }}]** {{ claim.statement }} {{ claim.evidence_ids | citation_ids }}
+{% endfor %}
+
+{% endif %}
+{% if insight_candidates %}
+## Insight Candidates (待人工核实)
+
+> **本章节说明**: 以下 claim 通过 LLM 二审支持，或来自 SWO/POS 维度的解释性表达。它们默认不进入主章节结论，供产品决策人参考，**需要人工复核**。
+
+{% for claim in insight_candidates %}
+- **[{{ claim.dimension }}]** {{ claim.statement }} {{ claim.evidence_ids | citation_ids }}
+{% endfor %}
+
+{% endif %}
+{% set target_users_claims = claims_by_competitor.values() | sum(start=[]) | selectattr("dimension", "equalto", "target_users") | list %}
+{% if target_users_claims %}
+## 目标用户洞察 (Target Users)
+
+{% for claim in target_users_claims %}
+- **[{{ claim.competitor_name }}]** {{ claim.statement }} {{ claim.evidence_ids | citation_ids }}
+{% endfor %}
+
+{% endif %}
+{% set strategic_claims = claims_by_competitor.values() | sum(start=[]) | selectattr("dimension", "equalto", "strategic_implications") | list %}
+{% if strategic_claims %}
+## 战略启示 (Strategic Implications)
+
+{% for claim in strategic_claims %}
+- **[{{ claim.competitor_name }}]** {{ claim.statement }} {{ claim.evidence_ids | citation_ids }}
+{% endfor %}
+
+{% endif %}
+## Risks & Unknowns
+
+{% if risks_claims %}
+> **本章节说明**: 以下结论的关键词 verifier 给出的 support_score 在 0.30-0.60 之间，因此被自动分类为“待人工核实”。
+>
+> 这不等于“内容错误”。当前关键词 verifier 对长 claim / 跨竞品对比偏严，详见 [KNOWN_ISSUES.md §3](../../KNOWN_ISSUES.md)。如需进一步评估，请查看同一 run 目录下的 `semantic_judge_report.json`，其中 supported 的 claim 通常可信度更高。
+
+以下结论证据支撑不足，需要人工核实：
+{% for claim in risks_claims %}
+- {{ claim.statement }}（证据强度：{{ claim.support_score }}）{{ claim.evidence_ids | citation_ids }}
+{% endfor %}
+{% else %}
+- 暂无低分待核实项。
+{% endif %}
+
+---
+
+## Evidence Appendix
+
+{% for ev in evidence %}
+**{{ ev.evidence_id }}** · {{ ev.competitor_name }} · {{ ev.claim_type }}
+> {{ ev.quote[:300] }}{% if ev.quote|length > 300 %}... [{{ ev.quote|length }} chars truncated]{% endif %}
+来源：{{ ev.source_id }}
+
+{% endfor %}

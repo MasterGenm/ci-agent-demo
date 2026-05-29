@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+{% block title %}{{ task_id }} · 竞品分析报告{% endblock %}
+{% block content %}
+<section class="run-head">
+  <div>
+    <p class="eyebrow mono">{{ task_id }}</p>
+    <h1>{{ metadata.query or "Run 详情" }}</h1>
+    <div class="meta-line">
+      <span class="status {{ metadata.status }}">{{ {"completed":"已完成","running":"运行中","failed":"失败","pending":"等待中"}.get(metadata.status, metadata.status) }}</span>
+      <span>{{ metadata.evidence_count }} 条证据</span>
+      <span>{{ metadata.claims_count }} 条 Claim</span>
+      {% if metadata.duration_seconds %}<span>耗时 {{ metadata.duration_seconds }}s</span>{% endif %}
+    </div>
+  </div>
+  <div class="competitors">
+    {% for name in metadata.competitors %}
+    <span>{{ name }}</span>
+    {% endfor %}
+  </div>
+</section>
+
+{% include "_progress.html" %}
+
+<section class="workspace" x-data="{ tab: 'dag' }">
+  <aside class="tabs" aria-label="分析维度标签页">
+    <button :class="{active: tab === 'dag'}" @click="tab = 'dag'" title="查看 8 节点 DAG 执行流程图及各节点耗时"><i data-lucide="git-branch"></i><span>流程图</span></button>
+    <button :class="{active: tab === 'report'}" @click="tab = 'report'" title="查看生成的竞品分析报告"><i data-lucide="file-text"></i><span>报告</span></button>
+    <button :class="{active: tab === 'evidence'}" @click="tab = 'evidence'" title="查看所有抓取的原始证据条目"><i data-lucide="paperclip"></i><span>证据库</span></button>
+    <button :class="{active: tab === 'qa'}" @click="tab = 'qa'" title="查看 QA Critic 对每条 Claim 的审查结果"><i data-lucide="shield-check"></i><span>QA 审查</span></button>
+    <button :class="{active: tab === 'revision'}" @click="tab = 'revision'" title="查看 QA 触发修订的 Claim 前后对比"><i data-lucide="repeat-2"></i><span>修订记录</span></button>
+    <button :class="{active: tab === 'trace'}" @click="tab = 'trace'" title="查看各节点执行耗时、Token 用量和成本"><i data-lucide="activity"></i><span>执行追踪</span></button>
+    <button :class="{active: tab === 'schema'}" @click="tab = 'schema'" title="查看系统使用的数据结构契约定义"><i data-lucide="braces"></i><span>数据结构</span></button>
+  </aside>
+  <div class="tab-panel">
+    <section x-show="tab === 'dag'" x-cloak>{% include "_dag.html" %}</section>
+    <section x-show="tab === 'report'" x-cloak>{% include "_report_tab.html" %}</section>
+    <section x-show="tab === 'evidence'" x-cloak>{% include "_evidence_tab.html" %}</section>
+    <section x-show="tab === 'qa'" x-cloak>{% include "_qa_critic_tab.html" %}</section>
+    <section x-show="tab === 'revision'" x-cloak>{% include "_revision_tab.html" %}</section>
+    <section x-show="tab === 'trace'" x-cloak>{% include "_trace_tab.html" %}</section>
+    <section x-show="tab === 'schema'" x-cloak>{% include "_schema_tab.html" %}</section>
+  </div>
+</section>
+{% endblock %}

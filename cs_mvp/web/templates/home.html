@@ -1,0 +1,130 @@
+{% extends "base.html" %}
+{% block title %}cs-mvp 竞品分析系统{% endblock %}
+{% block content %}
+<section class="hero p-8 mb-6 border-b border-slate-200">
+  <p class="eyebrow">AI 竞品分析 · Agent 协作系统</p>
+  <h1>AI 驱动的竞品情报分析平台</h1>
+  <p class="hero-subtitle">
+    多 Agent DAG 协作：自动采集公开信息、提取结构化证据、生成可溯源竞品 Claim、经 QA Critic 审查后输出可审计报告。
+  </p>
+  <p class="hero-meta">v{{ version }} &middot; {{ tests_count }} 个测试通过 &middot; LangGraph DAG + QA 反馈闭环</p>
+</section>
+
+<section class="capabilities grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-3 mb-6" aria-label="系统能力">
+  <article class="capability-card p-4 bg-slate-50 border-l-4 border-sky-500 hover:border-sky-700 transition-colors">
+    <h3><i data-lucide="git-merge"></i><span>多 Agent DAG</span></h3>
+    <p>Collector → Extractor → Analyst → QA Critic → Analyst Revise → Writer → Finalize，8 节点可视化流水线。</p>
+  </article>
+  <article class="capability-card p-4 bg-slate-50 border-l-4 border-emerald-500 hover:border-emerald-700 transition-colors">
+    <h3><i data-lucide="paperclip"></i><span>证据可溯源</span></h3>
+    <p>每条 Claim 绑定原文证据 ID、来源元数据、支持度分数，评审人可随时核查原文出处。</p>
+  </article>
+  <article class="capability-card p-4 bg-slate-50 border-l-4 border-amber-500 hover:border-amber-700 transition-colors">
+    <h3><i data-lucide="repeat-2"></i><span>QA 反馈闭环</span></h3>
+    <p>QA Critic 将低质量 Claim 路由回 Analyst 修订，完成后再次审查，形成受控闭环。</p>
+  </article>
+  <article class="capability-card p-4 bg-slate-50 border-l-4 border-indigo-500 hover:border-indigo-700 transition-colors">
+    <h3><i data-lucide="bar-chart-3"></i><span>全程可观测</span></h3>
+    <p>每次 Run 输出报告、证据、Trace、成本、修订历史、Review Queue，支持 Langfuse Cloud 追踪。</p>
+  </article>
+</section>
+
+<section class="surface status-surface">
+  <div class="section-title">
+    <h2><i data-lucide="activity"></i><span>系统状态</span></h2>
+    <span>本地 Dashboard</span>
+  </div>
+  <div class="status-grid grid grid-cols-2 md:grid-cols-4 gap-3">
+    <div>
+      <strong class="truncate block" title="{{ latest_run.task_id if latest_run else 'N/A' }}">{{ (latest_run.task_id or 'N/A')[:24] }}…</strong>
+      <span class="muted-text">最新 Run ID</span>
+    </div>
+    <div>
+      <strong>{{ total_runs }}</strong>
+      <span class="muted-text">历史 Run 数</span>
+    </div>
+    <div>
+      <strong>{{ schema_version }}</strong>
+      <span class="muted-text">Schema 版本</span>
+    </div>
+    <div>
+      <strong>{{ tests_count }}</strong>
+      <span class="muted-text">测试基线</span>
+    </div>
+  </div>
+</section>
+
+<section class="quick-actions">
+  <div class="section-title">
+    <h2><i data-lucide="zap"></i><span>快速入口</span></h2>
+    <span>Demo & 文档</span>
+  </div>
+  <div class="action-grid grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-3">
+    {% if demo_main %}
+    <a class="action-card" href="/runs/{{ demo_main }}">
+      <h3><i data-lucide="play-circle"></i><span>主 Demo Run</span></h3>
+      <p>查看冻结的 v1.5 完整 Run，含 DAG 可视化、QA 审查、修订历史、报告和证据。</p>
+    </a>
+    {% endif %}
+    {% if demo_backup %}
+    <a class="action-card" href="/runs/{{ demo_backup }}">
+      <h3><i data-lucide="history"></i><span>备用 Demo Run</span></h3>
+      <p>不依赖 Langfuse 凭证的本地兼容 Demo，可离线演示完整流程。</p>
+    </a>
+    {% endif %}
+    <a class="action-card" href="#runs-list">
+      <h3><i data-lucide="list-filter"></i><span>浏览历史 Run</span></h3>
+      <p>查看所有历史分析 Run，点击任意一条查看报告、证据、QA 结果和 Trace。</p>
+    </a>
+    <a class="action-card" href="/docs/SCHEMA.md">
+      <h3><i data-lucide="file-code-2"></i><span>数据结构文档</span></h3>
+      <p>查看 SourceRecord、EvidenceItem、AnalysisClaim、QAFeedback 等 Pydantic v2 契约定义。</p>
+    </a>
+    {% if latest_run %}
+    <a class="action-card" href="/runs/{{ latest_run.task_id }}">
+      <h3><i data-lucide="external-link"></i><span>打开最新报告</span></h3>
+      <p>{{ latest_run.query or latest_run.task_id }}</p>
+    </a>
+    {% endif %}
+  </div>
+</section>
+
+<section id="runs-list" class="surface">
+  <div class="section-title">
+    <h2><i data-lucide="rows-3"></i><span>历史 Run 列表</span></h2>
+    <span>共 {{ runs|length }} 条</span>
+  </div>
+  <div class="run-list">
+    {% for run in runs %}
+    <a class="run-row" href="/runs/{{ run.task_id }}">
+      <span class="mono">{{ run.task_id }}</span>
+      <span class="query">{{ run.query or "(无查询)" }}</span>
+      <span class="status {{ run.status }}">{{ run.status }}</span>
+      <span>{{ run.evidence_count }} 条证据</span>
+      <span>{{ run.claims_count }} 条 Claim</span>
+      <span>{% if run.qa_enabled %}含 QA{% else %}旧版{% endif %}</span>
+    </a>
+    {% else %}
+    <p class="empty">暂无历史 Run。</p>
+    {% endfor %}
+  </div>
+</section>
+
+<section class="surface trigger-run">
+  <div class="section-title">
+    <h2><i data-lucide="square-terminal"></i><span>触发新 Run</span></h2>
+    <span>主要工作流为 CLI，此处为辅助入口</span>
+  </div>
+  <form id="run-form" class="run-form">
+    <label>
+      <span>分析问题</span>
+      <input name="query" value="AI 笔记应用竞品分析" required>
+    </label>
+    <label>
+      <span>竞品列表（逗号分隔，可加 | 排除关键词）</span>
+      <input name="competitors" value="Notion,Evernote,Mem|seed=https://mem.ai,https://mem.ai/pricing" required>
+    </label>
+    <button type="submit"><i data-lucide="play"></i><span>开始分析</span></button>
+  </form>
+</section>
+{% endblock %}

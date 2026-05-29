@@ -1,0 +1,16 @@
+.venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+.git/
+.github/
+node_modules/
+runs/T-*
+runs/RUN-*
+data/*.db
+docs/screenshots/*.png
+.env
+.env.local
+WORK_REPORT_*.md

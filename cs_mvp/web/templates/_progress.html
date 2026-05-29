@@ -1,0 +1,32 @@
+<div id="run-progress"
+     data-status="{{ status.status }}"
+     {% if status.status not in ("completed", "failed") %}
+     hx-get="/runs/{{ task_id }}/progress"
+     hx-trigger="every 3s"
+     hx-target="#run-progress"
+     hx-swap="outerHTML"
+     hx-on::after-swap="if(document.getElementById('run-progress')?.dataset?.status==='completed'||document.getElementById('run-progress')?.dataset?.status==='failed'){location.reload()}"
+     {% endif %}
+     class="run-progress mb-4 p-4 bg-white border border-slate-200 rounded-lg shadow-sm">
+  <div class="progress-header">
+    <div>
+      <span class="text-sm font-semibold">执行进度</span>
+      <span class="label-{{ status.status }}">{{ {"completed":"已完成","running":"运行中","failed":"失败","pending":"等待中"}.get(status.status, status.status) }}</span>
+    </div>
+    <span class="progress-meta">
+      {{ status.completed_nodes }} / {{ status.total_nodes }} 节点
+      &middot; ${{ "%.4f"|format(status.total_cost_usd) }}
+      &middot; {{ status.total_latency_ms }}ms
+    </span>
+  </div>
+  <div class="progress-track" aria-label="执行进度">
+    <div class="progress-fill" style="width: {{ status.progress_percent }}%"></div>
+  </div>
+  <div class="progress-foot">
+    {% if status.current_node %}
+    <span>当前节点：<code>{{ status.current_node }}</code></span>
+    {% else %}
+    <span>{% if status.status == "completed" %}已完成{% elif status.status == "failed" %}执行失败{% else %}等待节点启动{% endif %}</span>
+    {% endif %}
+  </div>
+</div>

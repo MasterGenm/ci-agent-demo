@@ -1,0 +1,12 @@
+[
+  {
+    "claim_id": "C-CUR-FEA",
+    "run_id": "RUN-fixture",
+    "competitor_name": "Cursor",
+    "dimension": "features",
+    "statement": "Cursor supports code completion.",
+    "evidence_ids": ["E-001"],
+    "confidence": 0.75,
+    "accepted": true
+  }
+]

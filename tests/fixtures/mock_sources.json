@@ -1,0 +1,11 @@
+[
+  {
+    "source_id": "S-CUR-001",
+    "run_id": "RUN-fixture",
+    "competitor_name": "Cursor",
+    "url": "https://mock-cursor.example.com",
+    "source_type": "official_site",
+    "raw_text": "Cursor supports code completion and chat-based programming.",
+    "reliability_score": 0.8
+  }
+]

@@ -1,0 +1,105 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      width: 1280px;
+      height: 720px;
+      margin: 0;
+      overflow: hidden;
+      font-family: "Microsoft YaHei", "PingFang SC", Arial, sans-serif;
+      color: #ffffff;
+      background: linear-gradient(135deg, #1e3a8a 0%, #1d4ed8 100%);
+    }
+    .slide {
+      position: relative;
+      width: 1280px;
+      height: 720px;
+      padding: 78px 92px;
+    }
+    .accent {
+      width: 6px;
+      height: 84px;
+      border-radius: 999px;
+      background: #818cf8;
+      margin-bottom: 28px;
+    }
+    .eyebrow {
+      font-size: 20px;
+      font-weight: 700;
+      opacity: 0.86;
+      margin-bottom: 26px;
+    }
+    h1 {
+      width: 920px;
+      margin: 0;
+      font-size: 44px;
+      line-height: 1.18;
+      font-weight: 800;
+      max-height: 108px;
+      overflow: hidden;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+    }
+    .chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      max-width: 980px;
+      margin-top: 44px;
+    }
+    .chip {
+      padding: 8px 20px;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.16);
+      border: 1px solid rgba(255,255,255,0.24);
+      font-size: 18px;
+      font-weight: 700;
+      color: rgba(255,255,255,0.96);
+    }
+    .footer {
+      position: absolute;
+      left: 92px;
+      right: 92px;
+      bottom: 52px;
+      padding-top: 20px;
+      border-top: 1px solid rgba(255,255,255,0.34);
+      font-size: 16px;
+      color: rgba(255,255,255,0.76);
+      display: flex;
+      justify-content: space-between;
+    }
+    .mark {
+      position: absolute;
+      right: 82px;
+      top: 82px;
+      width: 176px;
+      height: 176px;
+      border: 1px solid rgba(255,255,255,0.18);
+      border-radius: 28px;
+      transform: rotate(8deg);
+    }
+  </style>
+</head>
+<body>
+  <main class="slide">
+    <div class="mark"></div>
+    <div class="accent"></div>
+    <div class="eyebrow">竞品分析报告</div>
+    <h1>{{ query|e }}</h1>
+    <section class="chips">
+      {% for competitor in competitors %}
+      <div class="chip">{{ competitor|e }}</div>
+      {% endfor %}
+    </section>
+    <footer class="footer">
+      <span>{{ completed_at|e }}</span>
+      <span>Run ID: {{ task_id|e }}</span>
+      <span>cs-mvp</span>
+    </footer>
+  </main>
+</body>
+</html>

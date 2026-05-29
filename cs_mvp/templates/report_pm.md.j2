@@ -1,0 +1,94 @@
+# 竞品分析简报
+
+**调研问题**：{{ payload.query }}
+**竞品范围**：{{ payload.competitors | join(' / ') }}
+**生成时间**：{{ payload.generated_at }}
+**Run ID**：{{ payload.run_id }}
+
+---
+
+## 1. 一页结论
+
+{% if payload.top_findings %}
+{% for finding in payload.top_findings %}
+- **{{ finding.competitor_name }} / {{ finding.dimension }}**：{{ finding.statement }} {{ finding.citation_text }}{% if finding.needs_validation %} _(needs validation)_{% endif %}
+{% endfor %}
+{% else %}
+- 当前 accepted claim 不足，建议补充采集后再形成产品判断。
+{% endif %}
+
+## 2. 竞品对比矩阵
+
+| 竞品 | 定位 | 核心能力 | 价格/商业模式 | 目标用户 | 明显风险 |
+|---|---|---|---|---|---|
+{% for row in payload.competitor_matrix %}
+| {{ row.competitor_name }} | {{ row.positioning }} | {{ row.core_capabilities }} | {{ row.pricing_or_business_model }} | {{ row.target_users }} | {{ row.visible_risk }} |
+{% endfor %}
+
+## 3. Top Findings
+
+{% if payload.top_findings %}
+{% for finding in payload.top_findings %}
+### {{ finding.finding_id }} · {{ finding.competitor_name }}
+
+{{ finding.statement }} {{ finding.citation_text }}{% if finding.support_score is not none %}
+
+- Evidence support score: {{ "%.2f"|format(finding.support_score) }}
+{% endif %}
+
+{% endfor %}
+{% else %}
+暂无可进入 PM 简报的核心发现。
+{% endif %}
+
+## 4. 各竞品画像
+
+{% for profile in payload.competitor_profiles %}
+### {{ profile.competitor_name }}
+
+- 产品画像：{{ profile.summary }} {{ profile.citation_text }}
+- 商业信号：{{ profile.business_signal }}
+- 需要关注：{{ profile.risk }}
+
+{% endfor %}
+
+## 5. 产品机会点
+
+{% for recommendation in payload.recommendations %}
+- **{{ recommendation.recommendation_id }}** {{ recommendation.action }}  
+  依据：{{ recommendation.rationale }} {{ recommendation.citation_text }}{% if recommendation.needs_validation %} _(needs validation)_{% endif %}
+{% endfor %}
+
+## 6. 风险与不确定性
+
+{% if payload.risks %}
+以下结论证据强度仍偏弱，不应直接用于产品决策：
+
+{% for risk in payload.risks %}
+- **{{ risk.competitor_name or "跨竞品" }} / {{ risk.dimension }}**：{{ risk.statement }}{% if risk.support_score is not none %}（support_score={{ "%.2f"|format(risk.support_score) }}）{% endif %} {{ risk.citation_text }}
+{% endfor %}
+{% else %}
+- 本轮没有进入 PM 简报的高优先级风险项。仍建议结合完整 `report.md` 与 evidence appendix 做人工复核。
+{% endif %}
+
+## 7. Evidence Digest
+
+{% if payload.evidence_digest["items"] %}
+{% for item in payload.evidence_digest["items"] %}
+### {{ item.claim_id }} · {{ item.competitor_name or "跨竞品" }} · {{ item.dimension }}
+
+{{ item.statement }}
+
+{% if item.digest_evidence %}
+{% for ev in item.digest_evidence %}
+- **{{ ev.evidence_id }}**：{{ ev.quote }}  
+  Why it matters: {{ ev.why_it_matters }}
+{% endfor %}
+{% else %}
+- 暂无可摘要证据，需人工补充验证。
+{% endif %}
+
+{% endfor %}
+{% else %}
+暂无 evidence digest。
+{% endif %}
