@@ -5,7 +5,7 @@ Thanks for considering a contribution! This project is in active development; sm
 ## Quick Setup
 
 ```bash
-git clone https://github.com/your-username/ci-agent.git
+git clone https://github.com/MasterGenm/ci-agent-demo.git
 cd ci-agent
 pip install -e ".[dev]"
 cp .env.example .env
