@@ -190,7 +190,7 @@ VISION_MODEL=moonshot-v1-128k-vision-preview
 
 ```bash
 docker build -t ci-agent .
-docker run --rm -p 8003:8003 -v ./runs:/app/runs --env-file .env ci-agent
+docker run --rm -p 8003:8003 -v ./runs:/app/runs --env-file .env ci-agent-demo
 ```
 
 ---
