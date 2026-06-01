@@ -139,8 +139,8 @@ httpx 请求
 ### 安装
 
 ```bash
-git clone https://github.com/your-username/ci-agent.git
-cd ci-agent
+git clone https://github.com/MasterGenm/ci-agent-demo.git
+cd ci-agent-demo
 pip install -e .
 cp .env.example .env
 # 编辑 .env，填入 TAVILY_API_KEY 和 LLM 配置
